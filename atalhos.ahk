@@ -1,47 +1,62 @@
-; ==========================================
-; CTRL + Q → Fecha YouTube + Spotify
-; ==========================================
-^q::
+#Requires AutoHotkey v2.0
+#UseHook
+
+$^q::
 {
-    http := ComObject("WinHttp.WinHttpRequest.5.1")
-    http.Open("GET", "http://127.0.0.1:9222/json", false)
-    http.Send()
-
-    json := http.ResponseText
-    pos := 1
-    ids := []
-
-    ; Coleta todas as abas do YouTube
-    while RegExMatch(json, 's)"id"\s*:\s*"([^"]+)".*?"type"\s*:\s*"page".*?"url"\s*:\s*"([^"]+)"', &m, pos)
+    try
     {
-        id := m[1]
-        url := m[2]
-        pos := m.Pos + m.Len
+        http := ComObject("WinHttp.WinHttpRequest.5.1")
+        http.Open("GET", "http://127.0.0.1:9222/json", false)
+        http.Send()
 
-        if InStr(url, "youtube.com") || InStr(url, "youtu.be")
-            ids.Push(id)
+        jsonText := http.ResponseText
+
+        html := ComObject("htmlfile")
+        html.write("<meta http-equiv='x-ua-compatible' content='IE=edge'>")
+        js := html.parentWindow
+
+        len := js.eval("(" jsonText ").length")
+
+        Loop len
+        {
+            i := A_Index - 1
+
+            type := js.eval("(" jsonText ")[" i "].type")
+            url := js.eval("(" jsonText ")[" i "].url")
+            id := js.eval("(" jsonText ")[" i "].id")
+
+            if (
+                type = "page"
+                && (
+                    InStr(url, "youtube.com")
+                    || InStr(url, "youtu.be")
+                    || InStr(url, "open.spotify.com")
+                )
+            )
+            {
+                closeReq := ComObject("WinHttp.WinHttpRequest.5.1")
+
+                closeReq.Open(
+                    "GET",
+                    "http://127.0.0.1:9222/json/close/" id,
+                    false
+                )
+
+                closeReq.Send()
+            }
+        }
     }
-
-    ; Fecha todas as abas do YouTube
-    for id in ids
+    catch
     {
-        close := ComObject("WinHttp.WinHttpRequest.5.1")
-        close.Open("GET", "http://127.0.0.1:9222/json/close/" id, false)
-        close.Send()
+        MsgBox "Não foi possível acessar o Brave na porta 9222."
     }
-
-    ; Fecha o Spotify
-    SetTitleMatchMode 2
-
-    if WinExist("Spotify")
-        WinClose("Spotify")
 }
 
+; ==========================================
+; CTRL + B
+; ==========================================
 
-; ==========================================
-; CTRL + B → Abre Brave
-; ==========================================
 ^b::
 {
-    Run "C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe"
+    Run '"C:\Users\junior.winkler\AppData\Local\BraveSoftware\Brave-Browser\Application\brave.exe" --remote-debugging-port=9222'
 }

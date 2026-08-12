@@ -30,4 +30,4 @@ jobs:
         run: dotnet publish MinhaApiDeploy/MinhaApiDeploy.csproj -c Release -o ./publish
 
       - name: Resultado do build
-        run: echo "Build concluído com sucesso!"
+        run: echo "::notice title=Sucesso!::Build e publicação concluídos com sucesso!"

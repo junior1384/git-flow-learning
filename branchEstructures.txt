@@ -1,0 +1,5 @@
+master -> Produção
+develop -> Desenvolvimento
+feature -> Funcionalidades
+release -> Versões
+hotifx -> Correções

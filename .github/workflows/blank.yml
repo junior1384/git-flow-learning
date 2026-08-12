@@ -28,3 +28,6 @@ jobs:
 
       - name: Publicar artefatos da API
         run: dotnet publish MinhaApiDeploy/MinhaApiDeploy.csproj -c Release -o ./publish
+
+      - name: Resultado do build
+        run: echo "Build concluído com sucesso!"

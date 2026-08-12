@@ -1,0 +1,31 @@
+name: Pipeline CI API C#
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main", "develop" ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar código do repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar o SDK do .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restaurar dependências
+        run: dotnet restore
+
+      - name: Compilar o projeto (Build)
+        run: dotnet build --no-restore -c Release
+
+      - name: Publicar artefatos da API
+        run: dotnet publish -c Release -o ./publish

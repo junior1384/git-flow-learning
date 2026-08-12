@@ -2,10 +2,9 @@ name: Pipeline CI API C#
 
 on:
   push:
-    branches: [ "main", "develop" ]
+    branches: ["main", "develop"]
   pull_request:
-    branches: [ "main", "develop" ]
-
+    branches: ["main", "develop"]
   workflow_dispatch:
 
 jobs:
@@ -19,13 +18,13 @@ jobs:
       - name: Configurar o SDK do .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: "8.0.x"
 
       - name: Restaurar dependências
-        run: dotnet restore
+        run: dotnet restore MinhaApiDeploy/MinhaApiDeploy.csproj
 
       - name: Compilar o projeto (Build)
-        run: dotnet build --no-restore -c Release
+        run: dotnet build MinhaApiDeploy/MinhaApiDeploy.csproj --no-restore -c Release
 
       - name: Publicar artefatos da API
-        run: dotnet publish -c Release -o ./publish
+        run: dotnet publish MinhaApiDeploy/MinhaApiDeploy.csproj -c Release -o ./publish

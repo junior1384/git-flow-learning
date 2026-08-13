@@ -1,6 +1,0 @@
-@MinhaApiDeploy_HostAddress = http://localhost:5085
-
-GET {{MinhaApiDeploy_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

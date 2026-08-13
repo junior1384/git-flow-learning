@@ -1,4 +1,4 @@
-name: Pipeline CI API C#
+name: Pipeline CI API Node
 
 on:
   push:
@@ -15,19 +15,17 @@ jobs:
       - name: Baixar código do repositório
         uses: actions/checkout@v4
 
-      - name: Configurar o SDK do .NET
-        uses: actions/setup-dotnet@v4
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
         with:
-          dotnet-version: "8.0.x"
+          node-version: "24"
+          cache: "npm"
 
-      - name: Restaurar dependências
-        run: dotnet restore MinhaApiDeploy/MinhaApiDeploy.csproj
+      - name: Instalar dependências
+        run: npm ci
 
-      - name: Compilar o projeto (Build)
-        run: dotnet build MinhaApiDeploy/MinhaApiDeploy.csproj --no-restore -c Release
-
-      - name: Publicar artefatos da API
-        run: dotnet publish MinhaApiDeploy/MinhaApiDeploy.csproj -c Release -o ./publish
+      - name: Verificar aplicação
+        run: node --check src/server.js
 
       - name: Resultado do build
-        run: echo "::notice title=Sucesso!::Build e publicação concluídos com sucesso!"
+        run: echo "::notice title=Sucesso!::API Node.js validada com sucesso!"

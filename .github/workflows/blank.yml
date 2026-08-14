@@ -1,31 +1,23 @@
-name: Pipeline CI API Node
+name: Testar servidor
 
 on:
-  push:
-    branches: ["main", "develop"]
-  pull_request:
-    branches: ["main", "develop"]
   workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  teste:
+    runs-on: self-hosted
 
     steps:
-      - name: Baixar código do repositório
-        uses: actions/checkout@v4
+      - name: Verificar servidor
+        run: |
+          echo "=== SERVIDOR ==="
+          hostname
 
-      - name: Configurar Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "24"
-          cache: "npm"
+          echo "=== USUARIO ==="
+          whoami
 
-      - name: Instalar dependências
-        run: npm ci
+          echo "=== SISTEMA ==="
+          uname -a
 
-      - name: Verificar aplicação
-        run: node --check src/server.js
-
-      - name: Resultado do build
-        run: echo "::notice title=Sucesso!::API Node.js validada com sucesso!"
+          echo "=== NODE ==="
+          node --version
